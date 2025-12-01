@@ -15,7 +15,7 @@ import kotlinx.serialization.encodeToString
 class OllamaChatClient(
     private val baseUrl: String = System.getenv("OLLAMA_BASE_URL") ?: "http://localhost:11434/v1",
     private val apiKey: String = System.getenv("OLLAMA_API_KEY") ?: "ollama",
-    private val modelName: String = System.getenv("OLLAMA_MODEL") ?: "cyberuser42/DeepSeek-R1-Distill-Llama-8B:latest" // "llama3"
+    private val modelName: String = System.getenv("OLLAMA_MODEL") ?: "llama3.1:8b" // "llama3"
 ) {
     private val httpClient: HttpClient = HttpClient.newBuilder()
         .connectTimeout(Duration.ofSeconds(30))
