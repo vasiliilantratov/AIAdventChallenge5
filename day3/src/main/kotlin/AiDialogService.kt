@@ -34,7 +34,7 @@ class AiDialogService(private val chatClient: OllamaChatClient) {
             
             Проанализируй запрос и задай первый уточняющий вопрос, который поможет лучше понять задачу.
             Вопрос должен быть конкретным и направленным на сбор важной информации.
-            Отвечай ТОЛЬКО текстом вопроса, без дополнительных пояснений.
+            Если возможно, предложи варианты ответов для помощи в выборе.
         """.trimIndent()
         
         return try {
@@ -42,8 +42,9 @@ class AiDialogService(private val chatClient: OllamaChatClient) {
             if (response.startsWith("Ошибка")) {
                 AiResponse.Error(response)
             } else {
-                lastQuestion = response.trim()
-                AiResponse.Question(lastQuestion)
+                val parsed = parseQuestionWithOptions(response.trim())
+                lastQuestion = parsed.first
+                AiResponse.Question(parsed.first, parsed.second)
             }
         } catch (e: Exception) {
             AiResponse.Error("Ошибка при обращении к ИИ: ${e.message}")
@@ -80,9 +81,10 @@ class AiDialogService(private val chatClient: OllamaChatClient) {
                     lowerResponse.contains("можно формировать резюме")) {
                     AiResponse.ReadyToSummarize
                 } else {
-                    // Сохраняем новый вопрос для следующего ответа
-                    lastQuestion = response.trim()
-                    AiResponse.Question(lastQuestion)
+                    // Парсим вопрос и варианты
+                    val parsed = parseQuestionWithOptions(response.trim())
+                    lastQuestion = parsed.first
+                    AiResponse.Question(parsed.first, parsed.second)
                 }
             }
         } catch (e: Exception) {
@@ -157,7 +159,16 @@ class AiDialogService(private val chatClient: OllamaChatClient) {
 - Задавай вопросы по одному
 - Вопросы должны быть конкретными и направленными
 - Не задавай слишком общих вопросов
-- Фокусируйся на важных аспектах: цели, аудитория, требования, ограничения, сроки, бюджет"""
+- Фокусируйся на важных аспектах: цели, аудитория, требования, ограничения, сроки, бюджет
+- Когда возможно, предлагай варианты ответов, чтобы помочь пользователю сделать выбор
+- Формат вопроса с вариантами:
+  ВОПРОС: [текст вопроса]
+  ВАРИАНТЫ:
+  1. [вариант 1]
+  2. [вариант 2]
+  3. [вариант 3]
+  (можно добавить "4. Другое" если нужен свободный ответ)
+- Если варианты не нужны, просто задай открытый вопрос"""
     }
     
     /**
@@ -173,7 +184,16 @@ class AiDialogService(private val chatClient: OllamaChatClient) {
 - Не повторяй уже заданные вопросы
 - Если пользователь исправляет информацию, учитывай исправления
 - Когда соберешь достаточно информации, напиши: "Мне кажется, информации достаточно для резюме"
-- Вопросы должны быть конкретными и направленными"""
+- Вопросы должны быть конкретными и направленными
+- Когда возможно, предлагай варианты ответов, чтобы помочь пользователю сделать выбор
+- Формат вопроса с вариантами:
+  ВОПРОС: [текст вопроса]
+  ВАРИАНТЫ:
+  1. [вариант 1]
+  2. [вариант 2]
+  3. [вариант 3]
+  (можно добавить "4. Другое" если нужен свободный ответ)
+- Если варианты не нужны, просто задай открытый вопрос"""
     }
     
     /**
@@ -202,6 +222,17 @@ class AiDialogService(private val chatClient: OllamaChatClient) {
             На основе этой информации задай следующий уточняющий вопрос.
             Если информации достаточно для формирования резюме, напиши: "Мне кажется, информации достаточно для резюме"
             Иначе задай один конкретный вопрос.
+            
+            Когда возможно, предложи варианты ответов, чтобы помочь пользователю сделать выбор.
+            Формат вопроса с вариантами:
+            ВОПРОС: [текст вопроса]
+            ВАРИАНТЫ:
+            1. [вариант 1]
+            2. [вариант 2]
+            3. [вариант 3]
+            (можно добавить "4. Другое" если нужен свободный ответ)
+            
+            Если варианты не нужны, просто задай открытый вопрос.
         """.trimIndent()
     }
     
@@ -264,7 +295,11 @@ class AiDialogService(private val chatClient: OllamaChatClient) {
             8. Критерии успеха
             - [список критериев успешности]
             
-            9. Дополнительные замечания и примеры
+            9. Решение или план решения
+            [предложи конкретное решение проблемы или детальный план действий для решения задачи.
+            План должен включать этапы, шаги, необходимые ресурсы и последовательность выполнения]
+            
+            10. Дополнительные замечания и примеры
             [аналоги, референсы, предпочтения, анти-примеры]
             
             Выведи резюме в текстовом формате с четкими заголовками разделов.
@@ -321,6 +356,10 @@ class AiDialogService(private val chatClient: OllamaChatClient) {
                     currentSection = "criteria"
                     sections[currentSection] = StringBuilder()
                 }
+                trimmed.contains("Решение или план", ignoreCase = true) -> {
+                    currentSection = "solution"
+                    sections[currentSection] = StringBuilder()
+                }
                 trimmed.contains("Дополнительные замечания", ignoreCase = true) -> {
                     currentSection = "notes"
                     sections[currentSection] = StringBuilder()
@@ -357,6 +396,7 @@ class AiDialogService(private val chatClient: OllamaChatClient) {
             ),
             constraints = sections["constraints"]?.toString()?.trim() ?: "Не указано",
             successCriteria = if (criteria.isEmpty()) listOf("Не указано") else criteria,
+            solutionOrPlan = sections["solution"]?.toString()?.trim() ?: "Не указано",
             additionalNotes = sections["notes"]?.toString()?.trim() ?: "Не указано"
         )
     }
@@ -370,6 +410,80 @@ class AiDialogService(private val chatClient: OllamaChatClient) {
             .filter { it.startsWith("-") || it.matches(Regex("^\\d+[.)]\\s+.*")) }
             .map { it.replace(Regex("^[-\\d+.)]\\s*"), "").trim() }
             .filter { it.isNotEmpty() }
+    }
+    
+    /**
+     * Парсит вопрос и варианты ответов из ответа ИИ
+     * Возвращает пару (вопрос, список вариантов)
+     */
+    private fun parseQuestionWithOptions(response: String): Pair<String, List<String>> {
+        val lines = response.lines().map { it.trim() }.filter { it.isNotEmpty() }
+        
+        // Ищем формат "ВОПРОС: ..." и "ВАРИАНТЫ:"
+        val questionParts = mutableListOf<String>()
+        val options = mutableListOf<String>()
+        var inOptionsSection = false
+        var foundQuestionHeader = false
+        
+        for (line in lines) {
+            when {
+                line.startsWith("ВОПРОС:", ignoreCase = true) -> {
+                    foundQuestionHeader = true
+                    val questionPart = line.substringAfter("ВОПРОС:").trim()
+                    if (questionPart.isNotEmpty()) {
+                        questionParts.add(questionPart)
+                    }
+                }
+                line.startsWith("ВАРИАНТЫ:", ignoreCase = true) -> {
+                    inOptionsSection = true
+                }
+                inOptionsSection && line.matches(Regex("^\\d+[.)]\\s+.*")) -> {
+                    // Извлекаем вариант (убираем номер и точку/скобку)
+                    val option = line.replace(Regex("^\\d+[.)]\\s+"), "").trim()
+                    if (option.isNotEmpty()) {
+                        options.add(option)
+                    }
+                }
+                !inOptionsSection && !foundQuestionHeader -> {
+                    // Накапливаем текст вопроса до секции вариантов
+                    questionParts.add(line)
+                }
+            }
+        }
+        
+        val questionText = if (questionParts.isNotEmpty()) {
+            questionParts.joinToString(" ").trim()
+        } else {
+            ""
+        }
+        
+        // Если не нашли структурированный формат, пытаемся найти варианты в тексте
+        if (options.isEmpty() && questionText.isEmpty()) {
+            // Пробуем найти варианты в обычном тексте (ищем строки вида "1. текст" или "1) текст")
+            val optionPattern = Regex("^\\s*(\\d+)[.)]\\s+(.+)$", RegexOption.MULTILINE)
+            val matches = optionPattern.findAll(response)
+            val foundOptions = matches.map { it.groupValues[2].trim() }.toList()
+            
+            if (foundOptions.isNotEmpty()) {
+                options.addAll(foundOptions)
+                // Извлекаем вопрос (все до первого варианта)
+                val firstMatch = optionPattern.find(response)
+                if (firstMatch != null) {
+                    val questionPart = response.substring(0, firstMatch.range.first).trim()
+                        .replace(Regex("(ВОПРОС:|ВАРИАНТЫ:)", RegexOption.IGNORE_CASE), "")
+                        .trim()
+                    return Pair(if (questionPart.isNotEmpty()) questionPart else response.trim(), options)
+                }
+            }
+            
+            // Просто открытый вопрос без вариантов
+            return Pair(response.trim(), emptyList())
+        }
+        
+        // Если вопрос пустой, берем весь ответ
+        val finalQuestion = if (questionText.isEmpty()) response.trim() else questionText
+        
+        return Pair(finalQuestion, options)
     }
 }
 

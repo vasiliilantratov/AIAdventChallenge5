@@ -5,6 +5,7 @@ package org.example
  */
 class DialogManager(private val aiDialogService: AiDialogService) {
     private var currentState: DialogState = DialogState.WaitingForInitialRequest
+    private var lastQuestionOptions: List<String> = emptyList() // Храним последние варианты ответов
     
     /**
      * Обрабатывает ввод пользователя и возвращает результат обработки
@@ -32,7 +33,11 @@ class DialogManager(private val aiDialogService: AiDialogService) {
                 if (trimmedInput.lowercase() == "summary") {
                     handleSummaryCommand()
                 } else {
-                    // Продолжаем диалог
+                    // Продолжаем диалог (возвращаемся к диалогу уточнений)
+                    currentState = DialogState.InClarificationDialog(
+                        initialRequest = (currentState as DialogState.ReadyForSummary).initialRequest,
+                        conversationHistory = (currentState as DialogState.ReadyForSummary).conversationHistory
+                    )
                     handleClarificationAnswer(trimmedInput)
                 }
             }
@@ -51,11 +56,12 @@ class DialogManager(private val aiDialogService: AiDialogService) {
         
         return when (response) {
             is AiResponse.Question -> {
+                lastQuestionOptions = response.options
                 currentState = DialogState.InClarificationDialog(
                     initialRequest = aiDialogService.getInitialRequest(),
                     conversationHistory = aiDialogService.getConversationHistory()
                 )
-                DialogAction.ShowQuestion(response.text)
+                DialogAction.ShowQuestion(response.text, response.options)
             }
             is AiResponse.Error -> {
                 DialogAction.ShowError(response.message)
@@ -74,16 +80,20 @@ class DialogManager(private val aiDialogService: AiDialogService) {
             return DialogAction.ShowMessage("Пожалуйста, введите ответ.")
         }
         
-        val response = aiDialogService.processAnswer(answer)
+        // Обрабатываем выбор по номеру варианта
+        val processedAnswer = processAnswerWithOptions(answer)
+        
+        val response = aiDialogService.processAnswer(processedAnswer)
         
         return when (response) {
             is AiResponse.Question -> {
+                lastQuestionOptions = response.options
                 // Обновляем состояние с актуальной историей из сервиса
                 currentState = DialogState.InClarificationDialog(
                     initialRequest = aiDialogService.getInitialRequest(),
                     conversationHistory = aiDialogService.getConversationHistory()
                 )
-                DialogAction.ShowQuestion(response.text)
+                DialogAction.ShowQuestion(response.text, response.options)
             }
             is AiResponse.ReadyToSummarize -> {
                 // Автоматически формируем резюме
@@ -137,8 +147,23 @@ class DialogManager(private val aiDialogService: AiDialogService) {
      */
     private fun handleNewCommand(): DialogAction {
         aiDialogService.reset()
+        lastQuestionOptions = emptyList()
         currentState = DialogState.WaitingForInitialRequest
         return DialogAction.Reset
+    }
+    
+    /**
+     * Обрабатывает ответ пользователя, преобразуя номер варианта в текст
+     */
+    private fun processAnswerWithOptions(answer: String): String {
+        // Проверяем, является ли ответ числом
+        val answerNum = answer.trim().toIntOrNull()
+        if (answerNum != null && answerNum > 0 && answerNum <= lastQuestionOptions.size) {
+            // Пользователь выбрал вариант по номеру
+            return lastQuestionOptions[answerNum - 1]
+        }
+        // Пользователь ввел свой ответ
+        return answer
     }
     
     /**
@@ -154,7 +179,7 @@ sealed class DialogAction {
     /**
      * Показать вопрос пользователю
      */
-    data class ShowQuestion(val question: String) : DialogAction()
+    data class ShowQuestion(val question: String, val options: List<String> = emptyList()) : DialogAction()
     
     /**
      * Показать сообщение

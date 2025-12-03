@@ -52,6 +52,15 @@ fun main() {
                 println()
                 println("ИИ-вопрос:")
                 println(action.question)
+                if (action.options.isNotEmpty()) {
+                    println()
+                    println("Варианты ответов:")
+                    action.options.forEachIndexed { index, option ->
+                        println("${index + 1}. $option")
+                    }
+                    println()
+                    println("Введите номер варианта или свой ответ:")
+                }
                 println()
             }
             is DialogAction.ShowMessage -> {
@@ -134,7 +143,11 @@ fun displaySummary(summary: TaskSummary) {
     }
     println()
     
-    println("9. Дополнительные замечания и примеры")
+    println("9. Решение или план решения")
+    println(summary.solutionOrPlan)
+    println()
+    
+    println("10. Дополнительные замечания и примеры")
     println(summary.additionalNotes)
     println()
 }

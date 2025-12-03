@@ -16,6 +16,7 @@ data class TaskSummary(
     val requirements: Requirements,
     val constraints: String,
     val successCriteria: List<String>,
+    val solutionOrPlan: String,
     val additionalNotes: String
 )
 
@@ -67,9 +68,12 @@ data class ConversationTurn(
  */
 sealed class AiResponse {
     /**
-     * ИИ задает уточняющий вопрос
+     * ИИ задает уточняющий вопрос (открытый или с вариантами)
      */
-    data class Question(val text: String) : AiResponse()
+    data class Question(
+        val text: String,
+        val options: List<String> = emptyList()
+    ) : AiResponse()
     
     /**
      * ИИ считает, что информации достаточно
