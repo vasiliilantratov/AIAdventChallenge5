@@ -19,7 +19,9 @@ repositories {
 
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    implementation("com.aallam.ktoken:ktoken:0.4.0")
+    implementation("org.xerial:sqlite-jdbc:3.44.1.0")
+    implementation("io.modelcontextprotocol:kotlin-sdk:0.8.0")
     testImplementation(kotlin("test"))
 }
 
@@ -28,8 +30,5 @@ tasks.test {
 }
 
 application {
-    mainClass.set("org.example.filesaver.FileSaverServerKt")
+    mainClass.set("org.example.MainKt")
 }
-
-
-

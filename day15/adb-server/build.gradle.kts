@@ -28,8 +28,6 @@ tasks.test {
 }
 
 application {
-    mainClass.set("org.example.filesaver.FileSaverServerKt")
+    mainClass.set("org.example.adb.AdbServerKt")
 }
-
-
 
