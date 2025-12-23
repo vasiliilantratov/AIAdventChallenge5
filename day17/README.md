@@ -63,6 +63,24 @@ ollama pull nomic-embed-text:latest
 ./gradlew run --args="remove /path/to/file.md"
 ```
 
+### Вопрос к LLM (режимы с RAG / без RAG)
+
+Команда `qa` отправляет вопрос в LLM в одном из двух режимов:
+
+```bash
+# Без RAG (модель отвечает без учёта индекса)
+./gradlew run --args="qa --mode plain \"Что такое проект Соната-2041?\""
+
+# С RAG (поиск релевантных чанков + ответ по контексту)
+./gradlew run --args="qa --mode rag --top-k 5 \"Что такое проект Соната-2041?\""
+```
+
+Параметры:
+- `--mode`: `plain` (без RAG, по умолчанию) или `rag` (с поиском по индексированным документам)
+- `--top-k`: количество чанков для режима `rag` (по умолчанию: 5)
+- `--ollama-url`: URL Ollama сервера (по умолчанию: http://localhost:11434)
+- `--db-path`: путь к файлу SQLite (по умолчанию: ./index.db)
+
 ## Примеры
 
 ```bash
