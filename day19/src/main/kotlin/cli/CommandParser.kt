@@ -2,6 +2,7 @@ package org.example.cli
 
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.subcommands
+import com.github.ajalt.clikt.core.context
 import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.convert
@@ -168,17 +169,71 @@ class QaCommand : CliktCommand(name = "qa", help = "Ask a question with or witho
         help = "Enable reranking using LLM (slower but more accurate)"
     )
     private val enableReranking: Boolean get() = enableRerankingFlag != null
-    private val relevanceThreshold by option(
+    private val relevanceThresholdRaw by option(
         "--relevance-threshold",
-        help = "Threshold for filtering results by relevance (0.0-1.0)"
+        help = "Threshold for filtering results by relevance (0.0-1.0). Use format: --relevance-threshold=0.3"
     )
-        .convert { it.toFloat() }
     private val rerankTopK by option(
         "--rerank-top-k",
         help = "Number of results to retrieve for reranking (default: topK * 2)"
     )
         .convert { it.toInt() }
-    private val questionParts by argument("question", help = "Question to ask the model").multiple()
+    private val questionPartsRaw by argument("question", help = "Question to ask the model").multiple()
+    
+    // Обрабатываем relevanceThreshold: извлекаем из опции или из questionParts
+    private val relevanceThreshold: Float? by lazy {
+        when {
+            // Если значение передано через опцию в формате --relevance-threshold=0.3
+            relevanceThresholdRaw != null && relevanceThresholdRaw!!.contains("=") -> {
+                relevanceThresholdRaw!!.split("=", limit = 2).last().toFloat()
+            }
+            // Если значение передано через опцию в формате --relevance-threshold 0.3
+            relevanceThresholdRaw != null -> {
+                relevanceThresholdRaw!!.toFloat()
+            }
+            // Иначе ищем значение в questionParts (если оно попало туда)
+            else -> {
+                var foundThreshold: Float? = null
+                
+                // Ищем числовое значение в диапазоне 0.0-1.0
+                for (part in questionPartsRaw) {
+                    try {
+                        val floatValue = part.toFloat()
+                        // Проверяем, что это похоже на порог релевантности (0.0-1.0, короткое число)
+                        if (floatValue in 0.0f..1.0f && part.matches(Regex("^0?\\.\\d+$|^1\\.0+$|^0$"))) {
+                            if (part.length <= 4) { // 0.3, 0.5, 1.0 и т.д.
+                                foundThreshold = floatValue
+                                break
+                            }
+                        }
+                    } catch (e: NumberFormatException) {
+                        // Не число, пропускаем
+                    }
+                }
+                
+                foundThreshold
+            }
+        }
+    }
+    
+    // Обрабатываем questionParts: удаляем значение порога, если оно там оказалось
+    private val questionParts: List<String> by lazy {
+        val threshold = relevanceThreshold
+        if (threshold != null && relevanceThresholdRaw == null) {
+            // Если порог был найден в questionParts, удаляем его
+            questionPartsRaw.filter { part ->
+                try {
+                    val floatValue = part.toFloat()
+                    !(floatValue in 0.0f..1.0f && part.matches(Regex("^0?\\.\\d+$|^1\\.0+$|^0$")) && part.length <= 4 && floatValue == threshold)
+                } catch (e: NumberFormatException) {
+                    true
+                }
+            }
+        } else {
+            questionPartsRaw
+        }
+    }
+    
     private val question: String get() = questionParts.joinToString(" ")
 
     override fun run() = runBlocking {
