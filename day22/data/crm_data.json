@@ -1,0 +1,188 @@
+{
+  "users": [
+    {
+      "id": "user_001",
+      "name": "Нора Веденеева",
+      "email": "n.vedeneeva@sevkvarts.ru",
+      "role": "Руководитель проекта",
+      "organization": "АО СевКварц",
+      "subscription": "enterprise",
+      "registered_at": "2041-03-01T10:00:00Z"
+    },
+    {
+      "id": "user_002",
+      "name": "Мария Летова",
+      "email": "m.letova@sevkvarts.ru",
+      "role": "Архивист-куратор",
+      "organization": "АО СевКварц",
+      "subscription": "professional",
+      "registered_at": "2041-03-05T14:30:00Z"
+    },
+    {
+      "id": "user_003",
+      "name": "Илья Громин",
+      "email": "i.gromin@sevkvarts.ru",
+      "role": "Инженер инфраструктуры",
+      "organization": "АО СевКварц",
+      "subscription": "professional",
+      "registered_at": "2041-03-10T09:15:00Z"
+    },
+    {
+      "id": "user_004",
+      "name": "Тимур Сафин",
+      "email": "t.safin@sevkvarts.ru",
+      "role": "Юрист проекта",
+      "organization": "АО СевКварц",
+      "subscription": "basic",
+      "registered_at": "2041-03-12T11:00:00Z"
+    },
+    {
+      "id": "user_005",
+      "name": "Оксана Рунова",
+      "email": "o.runova@sevkvarts.ru",
+      "role": "Специалист по интерфейсам",
+      "organization": "АО СевКварц",
+      "subscription": "professional",
+      "registered_at": "2041-04-01T10:30:00Z"
+    },
+    {
+      "id": "user_006",
+      "name": "Пётр Каплин",
+      "email": "p.kaplin@sevkvarts.ru",
+      "role": "Кладовщик",
+      "organization": "Кооператив Синица",
+      "subscription": "basic",
+      "registered_at": "2041-04-15T13:20:00Z"
+    }
+  ],
+  "tickets": [
+    {
+      "id": "ticket_001",
+      "user_id": "user_003",
+      "title": "Не работает авторизация в системе Соната",
+      "description": "При попытке входа в систему Соната-2041 через веб-интерфейс получаю ошибку 'Неверные учетные данные', хотя пароль точно правильный. Пробовал сбросить пароль - не помогает.",
+      "status": "open",
+      "priority": "high",
+      "category": "authentication",
+      "created_at": "2041-05-15T09:30:00Z",
+      "updated_at": "2041-05-15T09:30:00Z",
+      "tags": ["авторизация", "доступ", "веб-интерфейс"]
+    },
+    {
+      "id": "ticket_002",
+      "user_id": "user_002",
+      "title": "Поиск не находит документы по проекту",
+      "description": "Индексировала новые документы вчера, но семантический поиск их не находит. Проверила через команду stats - документы в базе есть, но search возвращает пустой результат.",
+      "status": "in_progress",
+      "priority": "high",
+      "category": "search",
+      "created_at": "2041-05-14T14:20:00Z",
+      "updated_at": "2041-05-15T10:15:00Z",
+      "tags": ["поиск", "индексация", "документы"],
+      "assigned_to": "support_team"
+    },
+    {
+      "id": "ticket_003",
+      "user_id": "user_005",
+      "title": "Как настроить реранкинг для более точных результатов?",
+      "description": "Читала в документации про опцию --enable-reranking, но не понимаю как правильно настроить пороги релевантности. Можете объяснить?",
+      "status": "open",
+      "priority": "medium",
+      "category": "configuration",
+      "created_at": "2041-05-15T11:00:00Z",
+      "updated_at": "2041-05-15T11:00:00Z",
+      "tags": ["настройка", "реранкинг", "релевантность"]
+    },
+    {
+      "id": "ticket_004",
+      "user_id": "user_006",
+      "title": "Ошибка при индексации больших файлов",
+      "description": "При попытке индексировать файл размером 12MB получаю ошибку 'File too large'. В документации написано что лимит 10MB. Можно ли увеличить лимит?",
+      "status": "resolved",
+      "priority": "low",
+      "category": "indexing",
+      "created_at": "2041-05-10T16:45:00Z",
+      "updated_at": "2041-05-12T09:30:00Z",
+      "resolved_at": "2041-05-12T09:30:00Z",
+      "resolution": "Объяснили, что лимит задан для предотвращения проблем с памятью. Рекомендовали разбить файл на части.",
+      "tags": ["индексация", "ограничения", "размер файла"]
+    },
+    {
+      "id": "ticket_005",
+      "user_id": "user_004",
+      "title": "Не удаляются старые документы из индекса",
+      "description": "Использовал команду remove для удаления документа, но он продолжает появляться в результатах поиска. База данных не обновляется?",
+      "status": "open",
+      "priority": "medium",
+      "category": "database",
+      "created_at": "2041-05-15T08:15:00Z",
+      "updated_at": "2041-05-15T08:15:00Z",
+      "tags": ["удаление", "индекс", "база данных"]
+    },
+    {
+      "id": "ticket_006",
+      "user_id": "user_001",
+      "title": "История диалогов не сохраняется",
+      "description": "Задаю вопросы через команду qa, но при просмотре через history ничего не отображается. Проверила путь к базе данных - все правильно.",
+      "status": "resolved",
+      "priority": "medium",
+      "category": "history",
+      "created_at": "2041-05-13T10:00:00Z",
+      "updated_at": "2041-05-14T15:20:00Z",
+      "resolved_at": "2041-05-14T15:20:00Z",
+      "resolution": "Оказалось, что пользователь использовал разные пути к БД в разных командах (--db-path). После унификации путей проблема решена.",
+      "tags": ["история", "база данных", "конфигурация"]
+    },
+    {
+      "id": "ticket_007",
+      "user_id": "user_003",
+      "title": "Сервер Лира-2 перегревается при индексации",
+      "description": "При индексации большого количества файлов температура сервера Лира-2 (корпус Б, стойка R5) поднимается до критических значений. Нужно решение.",
+      "status": "in_progress",
+      "priority": "critical",
+      "category": "infrastructure",
+      "created_at": "2041-05-15T07:00:00Z",
+      "updated_at": "2041-05-15T12:00:00Z",
+      "tags": ["сервер", "температура", "производительность"],
+      "assigned_to": "infrastructure_team"
+    },
+    {
+      "id": "ticket_008",
+      "user_id": "user_002",
+      "title": "Как работает алгоритм Резонанс-3?",
+      "description": "В документации упоминается алгоритм Резонанс-3 для семантического сопоставления. Где можно найти подробную информацию о том, как он работает?",
+      "status": "open",
+      "priority": "low",
+      "category": "documentation",
+      "created_at": "2041-05-14T16:30:00Z",
+      "updated_at": "2041-05-14T16:30:00Z",
+      "tags": ["документация", "алгоритм", "семантика"]
+    },
+    {
+      "id": "ticket_009",
+      "user_id": "user_005",
+      "title": "Ошибка подключения к Ollama",
+      "description": "При запуске любой команды получаю ошибку 'Failed to connect to Ollama server'. Ollama запущен на localhost:11434, но приложение не может подключиться.",
+      "status": "resolved",
+      "priority": "high",
+      "category": "configuration",
+      "created_at": "2041-05-12T13:15:00Z",
+      "updated_at": "2041-05-13T10:00:00Z",
+      "resolved_at": "2041-05-13T10:00:00Z",
+      "resolution": "Проблема была в файрволе. После добавления правила для порта 11434 все заработало.",
+      "tags": ["ollama", "подключение", "конфигурация"]
+    },
+    {
+      "id": "ticket_010",
+      "user_id": "user_001",
+      "title": "Нужна интеграция с внешней CRM системой",
+      "description": "Для автоматизации поддержки пользователей нужно интегрировать систему с нашей CRM. Можно ли добавить такую функциональность?",
+      "status": "open",
+      "priority": "medium",
+      "category": "feature_request",
+      "created_at": "2041-05-15T13:00:00Z",
+      "updated_at": "2041-05-15T13:00:00Z",
+      "tags": ["интеграция", "crm", "новая функция"]
+    }
+  ]
+}
