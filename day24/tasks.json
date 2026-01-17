@@ -1,0 +1,172 @@
+{
+    "tasks": [
+        {
+            "id": "2a9d1293-110a-4848-97dc-8eeb3991171f",
+            "title": "Реализовать аутентификацию пользователей",
+            "description": "Добавить JWT-токены для авторизации API. Включает регистрацию, логин и refresh токены.",
+            "priority": "HIGH",
+            "status": "IN_PROGRESS",
+            "assignee": "Алексей",
+            "tags": [
+                "backend",
+                "security",
+                "auth"
+            ],
+            "createdAt": "2026-01-10T09:00:00",
+            "updatedAt": "2026-01-14T15:30:00",
+            "dueDate": "2026-01-20T23:59:59"
+        },
+        {
+            "id": "d99220f1-7429-4952-b9e4-911399338aec",
+            "title": "Оптимизировать запросы к базе данных",
+            "description": "Профилировать и оптимизировать медленные SQL запросы. Добавить индексы там, где нужно.",
+            "priority": "HIGH",
+            "status": "TODO",
+            "assignee": "Мария",
+            "tags": [
+                "backend",
+                "database",
+                "performance"
+            ],
+            "createdAt": "2026-01-12T10:00:00",
+            "updatedAt": "2026-01-12T10:00:00",
+            "dueDate": "2026-01-25T23:59:59"
+        },
+        {
+            "id": "bbf00654-cfe3-4b97-b8f8-aaf08e4495bb",
+            "title": "Написать документацию API",
+            "description": "Создать OpenAPI спецификацию для всех эндпоинтов. Добавить примеры запросов и ответов.",
+            "priority": "MEDIUM",
+            "status": "TODO",
+            "assignee": "Иван",
+            "tags": [
+                "documentation",
+                "api"
+            ],
+            "createdAt": "2026-01-11T14:00:00",
+            "updatedAt": "2026-01-11T14:00:00",
+            "dueDate": "2026-01-30T23:59:59"
+        },
+        {
+            "id": "ab2b3768-bf0a-4cd8-a3b7-8b608b6d0bcc",
+            "title": "Исправить баг с загрузкой файлов",
+            "description": "При загрузке файлов больше 5MB происходит таймаут. Нужно увеличить лимит и добавить прогресс-бар.",
+            "priority": "CRITICAL",
+            "status": "BLOCKED",
+            "assignee": "Алексей",
+            "tags": [
+                "bug",
+                "frontend",
+                "file-upload"
+            ],
+            "createdAt": "2026-01-13T11:00:00",
+            "updatedAt": "2026-01-15T09:00:00",
+            "dueDate": "2026-01-17T23:59:59"
+        },
+        {
+            "id": "dd8f5426-8ac5-4240-8908-8f976c2ecce2",
+            "title": "Добавить unit тесты для модуля платежей",
+            "description": "Покрыть тестами критичную логику обработки платежей. Минимум 80% coverage.",
+            "priority": "HIGH",
+            "status": "TODO",
+            "assignee": "Мария",
+            "tags": [
+                "testing",
+                "payments",
+                "backend"
+            ],
+            "createdAt": "2026-01-09T08:00:00",
+            "updatedAt": "2026-01-09T08:00:00",
+            "dueDate": "2026-01-22T23:59:59"
+        },
+        {
+            "id": "9730ba22-a715-490b-b595-25631fc50d46",
+            "title": "Обновить зависимости проекта",
+            "description": "Обновить все npm пакеты до последних stable версий. Проверить, что ничего не сломалось.",
+            "priority": "LOW",
+            "status": "TODO",
+            "tags": [
+                "maintenance",
+                "dependencies"
+            ],
+            "createdAt": "2026-01-08T16:00:00",
+            "updatedAt": "2026-01-08T16:00:00"
+        },
+        {
+            "id": "5d2898f5-a3c2-44d2-a13f-95a9c15ee54a",
+            "title": "Настроить CI/CD pipeline",
+            "description": "Настроить автоматический деплой на staging при push в develop ветку.",
+            "priority": "MEDIUM",
+            "status": "IN_PROGRESS",
+            "assignee": "Иван",
+            "tags": [
+                "devops",
+                "ci-cd",
+                "automation"
+            ],
+            "createdAt": "2026-01-10T12:00:00",
+            "updatedAt": "2026-01-14T10:00:00",
+            "dueDate": "2026-01-28T23:59:59"
+        },
+        {
+            "id": "da93cf27-a9a0-4a3c-94a0-76437a61a889",
+            "title": "Редизайн страницы профиля пользователя",
+            "description": "Обновить UI страницы профиля согласно новым дизайн-макетам от UX команды.",
+            "priority": "MEDIUM",
+            "status": "TODO",
+            "assignee": "Анна",
+            "tags": [
+                "frontend",
+                "ui",
+                "design"
+            ],
+            "createdAt": "2026-01-14T09:00:00",
+            "updatedAt": "2026-01-14T09:00:00",
+            "dueDate": "2026-02-05T23:59:59"
+        },
+        {
+            "id": "c7792fc5-386e-4ca8-a657-4c190c268d49",
+            "title": "Добавить поддержку темной темы",
+            "description": "Реализовать переключатель между светлой и темной темой. Сохранять выбор пользователя.",
+            "priority": "LOW",
+            "status": "TODO",
+            "assignee": "Анна",
+            "tags": [
+                "frontend",
+                "ui",
+                "theme"
+            ],
+            "createdAt": "2026-01-13T15:00:00",
+            "updatedAt": "2026-01-13T15:00:00"
+        },
+        {
+            "id": "7d38ff8b-3c8c-4e23-87dd-e8579e3e3d88",
+            "title": "Провести code review для PR #142",
+            "description": "Проверить код новой фичи экспорта данных. Обратить внимание на безопасность и производительность.",
+            "priority": "HIGH",
+            "status": "DONE",
+            "assignee": "Мария",
+            "tags": [
+                "code-review",
+                "backend"
+            ],
+            "createdAt": "2026-01-13T10:00:00",
+            "updatedAt": "2026-01-14T17:00:00",
+            "dueDate": "2026-01-15T23:59:59"
+        },
+        {
+            "id": "4389fe87-085f-4cc4-8bb6-e19f08db311e",
+            "title": "Добавление логирования выполнения команд",
+            "description": "Необходимо реализовать логирование при выполнении команд в системе, чтобы отслеживать операции пользователя и аутентифицировать доступ к функциям.",
+            "priority": "HIGH",
+            "status": "TODO",
+            "tags": [
+                "логирування",
+                "команда",
+                "аудит"
+            ],
+            "createdAt": "2026-01-15T21:53:11.200416193",
+            "updatedAt": "2026-01-15T21:53:11.200416193"
+        }
+    ]
+}
